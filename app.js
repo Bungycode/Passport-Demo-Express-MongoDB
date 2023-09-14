@@ -4,9 +4,20 @@ const express = require("express");
 const LocalStrategy = require("passport-local").Strategy;
 const mongoose = require("mongoose");
 const passport = require("passport");
-const path = require("path");
 const Schema = mongoose.Schema;
 const session = require("express-session");
+
+const MongoDBStore = require("connect-mongodb-session")(session);
+
+var store = new MongoDBStore({
+  uri: process.env.MONGO_URI,
+  collection: "sessions",
+});
+
+// Catch errors
+store.on("error", function (error) {
+  console.log(error);
+});
 
 const mongoDB = process.env.MONGO_URI;
 mongoose.connect(mongoDB, { useUnifiedTopology: true, useNewUrlParser: true });
@@ -64,6 +75,7 @@ app.use(
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
+    store
   })
 );
 app.use(passport.initialize());
