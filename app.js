@@ -75,7 +75,7 @@ app.use(
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
-    store
+    store,
   })
 );
 app.use(passport.initialize());
@@ -109,7 +109,6 @@ app.get("/restricted", authMiddleware, (req, res) => {
 });
 
 app.get("/", (req, res) => {
-  console.log("res.locals =", res.locals);
   let messages = [];
   if (req.session.messages) {
     messages = req.session.messages;
@@ -131,8 +130,6 @@ app.post("/sign-up", async (req, res, next) => {
       username: req.body.username,
       password: hashedPassword,
     });
-    console.log(hashedPassword);
-    console.log("user =", user);
     res.redirect("/");
   } catch (err) {
     return next(err);
@@ -149,7 +146,6 @@ app.post(
 );
 
 app.get("/log-out", (req, res, next) => {
-  console.log("req.logout =", req.logout);
   req.session.destroy(function (err) {
     res.redirect("/");
   });
